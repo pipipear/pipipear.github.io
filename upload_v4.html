@@ -1,0 +1,90 @@
+<html>
+  <head>
+    <title></title>
+    <meta content="">
+    <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <style>
+
+      .title {
+        box-shadow: 0px 0px 4px 1px #0000002f;
+        background-color:#ffffff;
+        /* border-radius:10px; */
+        margin:20px;
+        width:auto;
+        text-align: center;
+        display:block;
+        cursor:pointer;
+        color:#000000;
+        font-family:Arial;
+        font-size:17px;
+        padding:20px 0px;
+        text-decoration:none;
+        transition: 0.1s;
+        user-select: none;
+      }
+
+      .myButton {
+        box-shadow: 0px 0px 4px 1px #0000002f;
+        background-color:#ffffff;
+        /* border-radius:10px; */
+        margin:20px;
+        width:auto;
+        text-align: center;
+        display:block;
+        cursor:pointer;
+        color:#147efb;
+        font-family:Arial;
+        font-size:17px;
+        padding:20px 0px;
+        text-decoration:none;
+        transition: 0.1s;
+        user-select: none;
+      }
+      .myButton > span {
+        color:#000000;
+      }
+
+      .myButton:hover {
+        background-color:#f0f0f0;
+        box-shadow: 0px 0px 4px 1px #00000028;
+      }
+
+      .myButton:active {
+        background-color:#147efb;
+        color:#ffffff;
+      }
+
+      .myButton:active > span {
+        color:#ffffff;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title"><strong>Select a device</strong></div>
+  </body>
+  <script>
+    var xmlHttp = new XMLHttpRequest();
+    var stuff = {};
+    for (i = 0; i < 255; i++) {
+      fetch(`http://192.168.100.${i + 1}:31415/ping`).then((response) => {
+        if (response.ok) {
+          var xmlHttp = new XMLHttpRequest();
+          console.log(response.url)
+          xmlHttp.open( "GET", response.url, false );
+          xmlHttp.send( null );
+          stuff[xmlHttp.responseText] = response.url.replace('http://','').replace('/ping','');
+          var theip = response.url.replace('http://','').replace(':31415/ping','');
+          document.body.innerHTML = `${document.body.innerHTML}\n<div class="myButton" onclick="sendfile('${theip}')"><strong>${xmlHttp.responseText.replace(/[^\w\s!?',@-_]/g,'')}</strong> <span>(${theip})<span></div>`;
+          return response.json();
+        }
+      })
+    }
+    function sendfile(ip) {
+      window.location.href = `shortcuts://run-shortcut?name=pidrop&input=${encodeURIComponent(ip)}`;
+    }
+  </script>
+</html>
